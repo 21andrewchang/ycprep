@@ -2,8 +2,7 @@
 	import { onMount } from 'svelte';
 
 	const DURATIONS_MS = {
-		easy: 20000,
-		medium: 15000,
+		normal: 15000,
 		hard: 5000
 	} as const;
 	const QUESTIONS = [
@@ -87,7 +86,7 @@
 	let startedAt = $state(0);
 	let elapsed = $state(0);
 	let rafId: number | null = null;
-	let difficulty = $state<'easy' | 'medium' | 'hard'>('medium');
+	let difficulty = $state<'normal' | 'hard'>('normal');
 	let phase = $state<'start' | 'running' | 'summary'>('start');
 	let tapCount = $state(0);
 	let timeoutCount = $state(0);
@@ -123,7 +122,11 @@
 	function tick() {
 		elapsed = performance.now() - startedAt;
 		if (elapsed >= durationMs) {
-			advance('timeout');
+			if (difficulty === 'hard') {
+				advance('timeout');
+				return;
+			}
+			elapsed = durationMs;
 			return;
 		}
 		rafId = requestAnimationFrame(tick);
@@ -147,7 +150,7 @@
 		startTimer();
 	}
 
-	function startSession(next: 'easy' | 'medium' | 'hard') {
+	function startSession(next: 'normal' | 'hard') {
 		difficulty = next;
 		questions = shuffle([...QUESTIONS]);
 		currentIndex = 0;
@@ -174,12 +177,12 @@
 <svelte:head>
 	<link
 		rel="stylesheet"
-		href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600&display=swap"
+		href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&display=swap"
 	/>
 </svelte:head>
 
 <main
-	class="relative grid min-h-[100dvh] touch-manipulation place-items-center overflow-hidden bg-white pt-[calc(env(safe-area-inset-top)+28px)] pr-[calc(env(safe-area-inset-right)+22px)] pb-[calc(env(safe-area-inset-bottom)+28px)] pl-[calc(env(safe-area-inset-left)+22px)] font-['Space_Grotesk'] text-neutral-900 [-webkit-tap-highlight-color:transparent]"
+	class="relative grid min-h-[100dvh] touch-manipulation place-items-center overflow-hidden bg-white pt-[calc(env(safe-area-inset-top)+28px)] pr-[calc(env(safe-area-inset-right)+22px)] pb-[calc(env(safe-area-inset-bottom)+28px)] pl-[calc(env(safe-area-inset-left)+22px)] font-['Cormorant_Garamond'] text-neutral-900 [-webkit-tap-highlight-color:transparent]"
 	onpointerdown={handleTap}
 >
 	{#if phase === 'running'}
@@ -193,54 +196,44 @@
 	{#if phase === 'start'}
 		<div class="relative z-10 grid max-w-[32rem] gap-6 text-center">
 			<p
-				class="m-0 font-['Garamond'] text-[clamp(24px,6vw,40px)] leading-[1.15] tracking-[-0.01em]"
+				class="m-0 font-['Cormorant_Garamond'] text-[clamp(24px,6vw,40px)] leading-[1.15] tracking-[-0.01em]"
 			>
 				YC interview prep
-			</p>
-			<p class="m-0 text-[14px] leading-[1.6] text-neutral-600">
-				Choose a difficulty to begin. You have one pass through all questions.
 			</p>
 			<div class="flex flex-col items-center gap-3">
 				<button
 					type="button"
-					class="w-52 rounded-full border border-neutral-200 bg-white px-5 py-3 text-[13px] tracking-[0.18em] text-neutral-700 uppercase"
-					onclick={() => startSession('easy')}
+					class="w-52 rounded-full border border-neutral-900 bg-neutral-900 px-5 py-3 font-sans text-[13px] tracking-[0.18em] text-white uppercase"
+					onclick={() => startSession('normal')}
 				>
-					Easy · 20s
+					Normal
 				</button>
 				<button
 					type="button"
-					class="w-52 rounded-full border border-neutral-900 bg-neutral-900 px-5 py-3 text-[13px] tracking-[0.18em] text-white uppercase"
-					onclick={() => startSession('medium')}
-				>
-					Medium · 15s
-				</button>
-				<button
-					type="button"
-					class="w-52 rounded-full border border-neutral-200 bg-white px-5 py-3 text-[13px] tracking-[0.18em] text-neutral-700 uppercase"
+					class="w-52 rounded-full border border-neutral-200 bg-white px-5 py-3 font-sans text-[13px] tracking-[0.18em] text-neutral-700 uppercase"
 					onclick={() => startSession('hard')}
 				>
-					Hard · 5s
+					Hard
 				</button>
 			</div>
 		</div>
 	{:else if phase === 'running'}
 		<div class="relative z-10 grid max-w-[36rem] gap-3.5 text-center">
 			<p
-				class="m-0 font-['Garamond'] text-[clamp(22px,5.4vw,36px)] leading-[1.2] tracking-[-0.01em]"
+				class="m-0 font-['Cormorant_Garamond'] text-[clamp(22px,5.4vw,36px)] leading-[1.2] tracking-[-0.01em]"
 			>
 				{formatQuestion(questions[currentIndex])}
 			</p>
 		</div>
 		<p
-			class="absolute bottom-7 left-1/2 m-0 -translate-x-1/2 text-[12px] tracking-[0.18em] text-neutral-500 uppercase"
+			class="absolute bottom-7 left-1/2 m-0 -translate-x-1/2 font-sans text-[10px] tracking-[0.18em] text-neutral-500 uppercase"
 		>
 			Tap to continue
 		</p>
 	{:else}
 		<div class="relative z-10 grid max-w-[28rem] gap-6 text-center">
 			<p
-				class="m-0 font-['Garamond'] text-[clamp(24px,6vw,40px)] leading-[1.15] tracking-[-0.01em]"
+				class="m-0 font-['Cormorant_Garamond'] text-[clamp(24px,6vw,40px)] leading-[1.15] tracking-[-0.01em]"
 			>
 				Session summary
 			</p>
