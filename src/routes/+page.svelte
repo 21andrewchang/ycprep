@@ -196,7 +196,7 @@
 	{#if phase === 'start'}
 		<div class="relative z-10 grid max-w-[32rem] gap-6 text-center">
 			<p
-				class="m-0 font-['Cormorant_Garamond'] text-[clamp(24px,6vw,40px)] leading-[1.15] tracking-[-0.01em]"
+				class="m-0 font-['Cormorant_Garamond'] text-[clamp(30px,7vw,48px)] leading-[1.1] tracking-[-0.01em]"
 			>
 				YC interview prep
 			</p>
@@ -220,7 +220,7 @@
 	{:else if phase === 'running'}
 		<div class="relative z-10 grid max-w-[36rem] gap-3.5 text-center">
 			<p
-				class="m-0 font-['Cormorant_Garamond'] text-[clamp(22px,5.4vw,36px)] leading-[1.2] tracking-[-0.01em]"
+				class="m-0 font-['Cormorant_Garamond'] text-[clamp(26px,6.6vw,42px)] leading-[1.2] tracking-[-0.01em]"
 			>
 				{formatQuestion(questions[currentIndex])}
 			</p>
